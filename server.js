@@ -8,6 +8,19 @@ const app = express();
 
 // Cho phép nhận dữ liệu JSON
 app.use(express.json());
+app.get("/health", (req, res) => {
+  if (mongoose.connection.readyState === 1) {
+    return res.status(200).json({
+      status: "healthy",
+      mongodb: "connected"
+    });
+  }
+
+  return res.status(503).json({
+    status: "unhealthy",
+    mongodb: "disconnected"
+  });
+});
 
 // Kiểm tra API
 app.get("/", (req, res) => {
