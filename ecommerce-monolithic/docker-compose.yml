@@ -1,0 +1,17 @@
+services:
+  app:
+    build: .
+    container_name: ecommerce-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: "postgresql://postgres:postgres@host.docker.internal:5432/ecommerce"
+      JWT_SECRET: "${JWT_SECRET}"
+      JWT_EXPIRES_IN: "${JWT_EXPIRES_IN:-1d}"
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/test-db', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
